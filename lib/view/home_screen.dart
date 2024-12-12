@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app_demo/models/news_channel_headlines_model.dart';
+import 'package:news_app_demo/view/categories_screen.dart';
 import 'package:news_app_demo/view_model/news_view_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,9 +14,24 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+enum FilterList {
+  bbcNews,
+  aryNews,
+  cryptoCoinsNews,
+  cnn,
+  alJazeeraEnglish,
+  australianFinancialReview,
+  espn
+}
+
 class _HomeScreenState extends State<HomeScreen> {
   NewsViewModel newsViewModel = NewsViewModel();
+
+  FilterList? selectedMenu;
+
   final format = DateFormat('MMMM dd, yyyy');
+
+  String name = 'bbc-news';
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height * 1;
@@ -23,7 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CategoriesScreen()));
+            },
             icon:
                 Image.asset('images/category_icon.png', height: 30, width: 30)),
         centerTitle: true,
@@ -31,6 +52,100 @@ class _HomeScreenState extends State<HomeScreen> {
           'News',
           style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w700),
         ),
+        actions: [
+          PopupMenuButton<FilterList>(
+            initialValue: selectedMenu,
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.black,
+            ),
+            onSelected: (FilterList item) {
+              if (FilterList.bbcNews.name == item.name) {
+                setState(() {
+                  name = 'bbc-news';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              } else if (FilterList.aryNews.name == item.name) {
+                setState(() {
+                  name = 'ary-news';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              } else if (FilterList.alJazeeraEnglish.name == item.name) {
+                setState(() {
+                  name = 'al-jazeera-english';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              } else if (FilterList.australianFinancialReview.name ==
+                  item.name) {
+                setState(() {
+                  name = 'australian-financial-review';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              } else if (FilterList.cnn.name == item.name) {
+                setState(() {
+                  name = 'cnn';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              } else if (FilterList.cryptoCoinsNews.name == item.name) {
+                setState(() {
+                  name = 'crypto-coins-news';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              } else if (FilterList.espn.name == item.name) {
+                setState(() {
+                  name = 'espn';
+                  // name = item.name;
+                  selectedMenu = item;
+                  // newsViewModel.resetNewsChannelHeadlines();
+                });
+              }
+
+              // newsViewModel.fetchNewsChannelHeadlinesApi(name);
+            },
+            itemBuilder: (context) => <PopupMenuEntry<FilterList>>[
+              const PopupMenuItem(
+                value: FilterList.bbcNews,
+                child: Text('BBC News'),
+              ),
+              const PopupMenuItem(
+                value: FilterList.aryNews,
+                child: Text('ARY News'),
+              ),
+              const PopupMenuItem(
+                value: FilterList.australianFinancialReview,
+                child: Text("Australian Financial Review"),
+              ),
+              const PopupMenuItem(
+                value: FilterList.cryptoCoinsNews,
+                child: Text("Crypto Coins News"),
+              ),
+              const PopupMenuItem(
+                value: FilterList.cnn,
+                child: Text("CNN"),
+              ),
+              const PopupMenuItem(
+                value: FilterList.alJazeeraEnglish,
+                child: Text("Al Jazeera English"),
+              ),
+              const PopupMenuItem(
+                value: FilterList.espn,
+                child: Text("ESPN"),
+              ),
+            ],
+          ),
+        ],
       ),
       body: ListView(
         children: [
@@ -38,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: height * 0.55,
             width: width,
             child: FutureBuilder<NewsChannelHeadlinesModel>(
-              future: newsViewModel.fetchNewsChannelHeadlinesApi(),
+              future: newsViewModel.fetchNewsChannelHeadlinesApi(name),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
