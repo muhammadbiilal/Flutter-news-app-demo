@@ -3,7 +3,11 @@ class NewsChannelHeadlinesModel {
   int? totalResults;
   List<Articles>? articles;
 
-  NewsChannelHeadlinesModel({this.status, this.totalResults, this.articles});
+  NewsChannelHeadlinesModel({
+    this.status,
+    this.totalResults,
+    this.articles,
+  });
 
   NewsChannelHeadlinesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
